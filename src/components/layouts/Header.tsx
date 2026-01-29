@@ -10,21 +10,27 @@ import {
   Text,
 } from '@chakra-ui/react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { FaBars, FaTimes } from 'react-icons/fa'
 import LogoutDialog from '@/components/common/LogoutDialog'
 import { MEMBER_ROLE } from '@/constants'
-import { MemberWithRole } from '@/domains/member'
+import { useUserInfo } from '@/hooks/useAuth'
 
-interface PageProps {
-  data: MemberWithRole | null
-}
-
-export default function Header({ data: user }: PageProps) {
+export default function Header() {
+  const { data: user } = useUserInfo()
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
   const isLoggedIn = useMemo(() => !!user, [user])
   const isAdmin = useMemo(() => user?.role_code === MEMBER_ROLE.ADMIN, [user])
+
+  // 로그인 페이지 URL (현재 경로를 redirect_url로 포함)
+  const signInUrl = useMemo(() => {
+    // 이미 로그인 관련 페이지면 redirect_url 없이
+    if (pathname.startsWith('/auth')) return '/auth/sign-in'
+    return `/auth/sign-in?redirect_url=${encodeURIComponent(pathname)}`
+  }, [pathname])
 
   const menuItems = [
     { label: '공지사항', href: '/notice' },
@@ -103,7 +109,7 @@ export default function Header({ data: user }: PageProps) {
                 </Button>
               </>
             ) : (
-              <Link href="/auth/sign-in">
+              <Link href={signInUrl}>
                 <Button colorScheme="teal" size="sm">
                   로그인
                 </Button>
@@ -159,7 +165,7 @@ export default function Header({ data: user }: PageProps) {
                 </Box>
               ) : (
                 <Box mt={2}>
-                  <Link href="/auth/sign-in">
+                  <Link href={signInUrl}>
                     <Button
                       colorScheme="teal"
                       size="sm"

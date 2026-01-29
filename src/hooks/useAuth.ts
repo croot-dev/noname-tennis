@@ -13,18 +13,19 @@ export const authKeys = {
 /**
  * Sign Up mutataion (프로필 생성)
  */
-export function useMemberJoin() {
-  const queryClient = useQueryClient()
+interface MemberJoinResponse {
+  success: boolean
+  user: Member
+  accessToken: string
+}
 
+export function useMemberJoin() {
   return useMutation({
     mutationFn: (data: CreateMemberDto) =>
-      request<Member>('/api/member', {
+      request<MemberJoinResponse>('/api/member', {
         method: 'POST',
         body: data,
       }),
-    onSuccess: () => {
-      queryClient.clear()
-    },
   })
 }
 

@@ -4,25 +4,29 @@ import { Box, Heading, Text, Stack } from '@chakra-ui/react'
 import Image from 'next/image'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 export default function AuthSignIn() {
   const REST_API_KEY = process.env.KAKAO_RESTAPI_KEY
+  const searchParams = useSearchParams()
   const [redirectUri, setRedirectUri] = useState('')
 
-  console.log(process.env)
+  // 로그인 후 돌아갈 URL (기본값: /dashboard)
+  const returnUrl = searchParams.get('redirect_url') || '/dashboard'
+
   useEffect(() => {
     setRedirectUri(`${window.location.origin}${process.env.KAKAO_REDIRECT_URI}`)
   }, [])
 
   const { data: kakaoAuthUrl, refetch } = useQuery<string>({
-    queryKey: ['kakao-login'],
+    queryKey: ['kakao-login', returnUrl],
     queryFn: async () => {
-      // 이름, 생년월일, 성별, 이메일 정보 동의 요청
-      // const scope = 'profile_nickname,account_email,name,birthyear,birthday,gender'
       const scope = 'profile_nickname,profile_image,account_email'
-      return `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${redirectUri}&scope=${scope}`
+      // state 파라미터에 returnUrl을 인코딩해서 전달
+      const state = encodeURIComponent(returnUrl)
+      return `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`
     },
-    enabled: false, // This ensures the query doesn't run on component mount
+    enabled: false,
   })
 
   useEffect(() => {

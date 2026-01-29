@@ -20,7 +20,8 @@ import {
 import { useForm, Controller } from 'react-hook-form'
 import { setAuthFlag } from '@/lib/auth.client'
 import { MEMBER_GENDER, NTRP_LEVELS } from '@/constants'
-import { useMemberJoin } from '@/hooks/useAuth'
+import { useMemberJoin, authKeys } from '@/hooks/useAuth'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface FormValues {
   name: string
@@ -39,9 +40,14 @@ const GENDER_OPTIONS = [
 export default function AuthSignInComplete() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const queryClient = useQueryClient()
   const memberJoin = useMemberJoin()
   const code = searchParams.get('code')
+  const state = searchParams.get('state')
   const [redirectUri, setRedirectUri] = useState('')
+
+  // 로그인 후 돌아갈 URL (state에서 디코딩, 기본값: /dashboard)
+  const returnUrl = state ? decodeURIComponent(state) : '/dashboard'
 
   useEffect(() => {
     setRedirectUri(`${window.location.origin}${process.env.KAKAO_REDIRECT_URI}`)
@@ -88,8 +94,11 @@ export default function AuthSignInComplete() {
         // 임시 데이터 정리
         localStorage.removeItem('kakaoUserTemp')
 
+        // 사용자 정보 즉시 캐시에 설정
+        queryClient.setQueryData(authKeys.user(), data.existingUser)
+
         // 대시보드로 이동
-        router.push('/dashboard')
+        router.push(returnUrl)
       } else {
         setKakaoUserInfo({
           id: data.user.id,
@@ -98,7 +107,7 @@ export default function AuthSignInComplete() {
         setShowForm(true)
       }
     }
-  }, [data, router])
+  }, [data, router, queryClient, returnUrl])
 
   const onSubmit = handleSubmit(async (formData) => {
     const memberJoinData = {
@@ -120,8 +129,11 @@ export default function AuthSignInComplete() {
         // 임시 데이터 삭제
         localStorage.removeItem('kakaoUserTemp')
 
+        // 사용자 정보 즉시 캐시에 설정
+        queryClient.setQueryData(authKeys.user(), result.user)
+
         // 대시보드로 이동
-        router.push('/dashboard')
+        router.push(returnUrl)
       },
       onError: (error) => {
         console.error('회원가입 에러:', error)
