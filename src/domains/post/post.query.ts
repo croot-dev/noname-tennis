@@ -17,8 +17,12 @@ export async function getPostList(
   limit: number = 10,
   filter?: PostListFilter // 필터 추가
 ): Promise<ResponseList<PostListItem>> {
-  const offset = (page - 1) * limit // 1. 조건절 동적 생성
-  const conditions = [sql`bbs_type_id = ${bbs_type_id}`]
+  const offset = (page - 1) * limit
+  const conditions = [
+    sql`bbs_type_id = ${bbs_type_id}`,
+    sql`(display_start_at IS NULL OR display_start_at <= NOW())`,
+    sql`(display_end_at IS NULL OR display_end_at >= NOW())`,
+  ]
   const whereClause = conditions.reduce((acc, curr) => sql`${acc} AND ${curr}`)
 
   const [posts, countResult] = (await Promise.all([

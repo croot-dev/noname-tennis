@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.73.0",
     "@chakra-ui/react": "^3.24.1",
     "@emotion/react": "^11.14.0",
     "@fullcalendar/core": "^6.1.20",

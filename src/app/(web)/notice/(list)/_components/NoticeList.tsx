@@ -135,7 +135,7 @@ export default async function NoticeList({ currentPage }: NoticeListProps) {
                       </Box>
                     </Link>
                   </Table.Cell>
-                  <Table.Cell textAlign="center">{post.writer_id}</Table.Cell>
+                  <Table.Cell textAlign="center">{post.writer_name}</Table.Cell>
                   <Table.Cell textAlign="center">{post.view_count}</Table.Cell>
                   <Table.Cell textAlign="center">
                     {new Date(post.created_at).toLocaleDateString('ko-KR')}

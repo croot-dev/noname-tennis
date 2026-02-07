@@ -38,7 +38,7 @@ export default function Home() {
             <Heading size="2xl" mb={4}>
               주요 기능
             </Heading>
-            <Text fontSize="lg" color="gray.600">
+            <Text fontSize="lg" color="gray.600" _dark={{ color: 'gray.400' }}>
               이름없는 테니스 모임에서 제공하는 서비스를 확인하세요
             </Text>
           </Box>
@@ -52,7 +52,7 @@ export default function Home() {
                     <FaBell />
                   </Box>
                   <Heading size="lg">공지사항</Heading>
-                  <Text color="gray.600">
+                  <Text color="gray.600" _dark={{ color: 'gray.500' }}>
                     모임의 최신 소식과 중요한 공지사항을 확인하세요
                   </Text>
                   <Link href="/notice">
@@ -72,7 +72,7 @@ export default function Home() {
                     <FaCalendarAlt />
                   </Box>
                   <Heading size="lg">일정 관리</Heading>
-                  <Text color="gray.600">
+                  <Text color="gray.600" _dark={{ color: 'gray.500' }}>
                     편리하게 테니스 일정을 확인하고 참석하세요
                   </Text>
                   <Link href="/schedule">
@@ -92,7 +92,7 @@ export default function Home() {
                     <FaUser />
                   </Box>
                   <Heading size="lg">프로필 관리</Heading>
-                  <Text color="gray.600">
+                  <Text color="gray.600" _dark={{ color: 'gray.500' }}>
                     개인 정보를 관리하고 활동 내역을 확인하세요
                   </Text>
                   <Link href="/member">
@@ -108,10 +108,12 @@ export default function Home() {
       </Container>
 
       {/* CTA Section */}
-      <Box bg="gray.50" py={16}>
+      {/* <Box bg='gray.200' py={16} _dark={{bg:'gray.600'}}> */}
+      <Box bg="gray.200" py={16}>
         <Container maxW="container.md">
           <Stack gap={6} align="center" textAlign="center">
             <Heading size="2xl">지금 시작하세요</Heading>
+            {/* <Text fontSize="lg" color="gray.600" _dark={{color: "gray.300"}}> */}
             <Text fontSize="lg" color="gray.600">
               이름없는 테니스 모임과 함께 테니스 실력을 향상시키고 새로운
               친구들을 만나보세요

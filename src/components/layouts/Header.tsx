@@ -36,10 +36,8 @@ export default function Header() {
     { label: '공지사항', href: '/notice' },
     ...(!!isLoggedIn
       ? [
-          { label: '대시보드', href: '/dashboard' },
-          { label: '일정', href: '/schedule' },
-          { label: '코트예약', href: '/reservation' },
-          { label: '회원목록', href: '/member' },
+          { label: '블라인드', href: '/blind' },
+          { label: '관리', href: '/management' },
         ]
       : []),
   ]

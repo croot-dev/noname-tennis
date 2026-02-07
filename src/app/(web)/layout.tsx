@@ -5,6 +5,8 @@ import { Provider as ChakraProvider } from '@/components/ui/provider'
 import TanstackProvider from '@/components/tanstackProvider'
 import Header from '@/components/layouts/Header'
 import Footer from '@/components/layouts/Footer'
+import MobileBottomNav from '@/components/layouts/MobileBottomNav'
+import ChatBot from '@/components/chat/ChatBot'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -35,8 +37,14 @@ export default function RootLayout({
         <ChakraProvider>
           <TanstackProvider>
             <Header />
-            {children}
+            <main
+              style={{ minHeight: '100vh', background: 'var(--content-bg)' }}
+            >
+              {children}
+            </main>
             <Footer />
+            <ChatBot />
+            <MobileBottomNav />
           </TanstackProvider>
         </ChakraProvider>
       </body>
