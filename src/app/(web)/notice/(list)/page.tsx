@@ -4,8 +4,8 @@ import NoticeList from './_components/NoticeList'
 import NoticeWriteButton from './_components/NoticeWriteButton'
 
 export const metadata = {
-  title: '공지사항 - 이름없는 테니스 모임',
-  description: '이름없는 테니스 모임의 공지사항을 확인하세요.',
+  title: '공지사항 - 풀코트 테니스 모임',
+  description: '풀코트 테니스 모임의 공지사항을 확인하세요.',
 }
 
 interface PageProps {

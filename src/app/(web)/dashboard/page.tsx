@@ -28,7 +28,7 @@ export default async function DashboardPage() {
               안녕하세요, {user.nickname}님! 👋
             </Heading>
             <Text color="gray.600" fontSize="lg">
-              이름없는 테니스 모임에 오신 것을 환영합니다.
+              풀코트 테니스 모임에 오신 것을 환영합니다.
             </Text>
           </Box>
 

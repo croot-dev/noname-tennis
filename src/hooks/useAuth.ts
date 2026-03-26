@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
 import { hasAuthFlag, clearAuthFlag } from '@/lib/auth.client'
 import { ApiError, request, refreshToken } from '@/lib/api.client'
 import { CreateMemberDto, Member, MemberWithRole } from '@/domains/member'
@@ -33,9 +34,12 @@ export function useMemberJoin() {
  * 현재 사용자 정보 조회
  */
 export function useUserInfo() {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   return useQuery({
     queryKey: authKeys.user(),
-    enabled: typeof window !== 'undefined' && hasAuthFlag(),
+    enabled: mounted && hasAuthFlag(),
     staleTime: 1000 * 60 * 1,
     retry: false,
 

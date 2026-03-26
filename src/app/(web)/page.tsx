@@ -21,7 +21,7 @@ export default function Home() {
         <Container maxW="container.xl">
           <Stack gap={6} align="center" textAlign="center">
             <Heading size="3xl" fontWeight="bold">
-              이름없는 테니스 모임
+              풀코트 테니스 모임
             </Heading>
             <Text fontSize="xl" maxW="2xl">
               테니스 초보자들의 즐거운 모임입니다. 함께 배우고 성장하는 테니스
@@ -39,7 +39,7 @@ export default function Home() {
               주요 기능
             </Heading>
             <Text fontSize="lg" color="gray.600" _dark={{ color: 'gray.400' }}>
-              이름없는 테니스 모임에서 제공하는 서비스를 확인하세요
+              풀코트 테니스 모임에서 제공하는 서비스를 확인하세요
             </Text>
           </Box>
 
@@ -115,8 +115,8 @@ export default function Home() {
             <Heading size="2xl">지금 시작하세요</Heading>
             {/* <Text fontSize="lg" color="gray.600" _dark={{color: "gray.300"}}> */}
             <Text fontSize="lg" color="gray.600">
-              이름없는 테니스 모임과 함께 테니스 실력을 향상시키고 새로운
-              친구들을 만나보세요
+              풀코트 테니스 모임과 함께 테니스 실력을 향상시키고 새로운 친구들을
+              만나보세요
             </Text>
             <Link href="/auth/sign-in">
               <Button size="lg" colorScheme="teal">

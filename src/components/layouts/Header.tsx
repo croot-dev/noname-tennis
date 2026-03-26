@@ -19,7 +19,7 @@ import { MEMBER_ROLE } from '@/constants'
 import { useUserInfo } from '@/hooks/useAuth'
 
 export default function Header() {
-  const { data: user } = useUserInfo()
+  const { data: user, isLoading: isAuthLoading } = useUserInfo()
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
@@ -96,7 +96,7 @@ export default function Header() {
 
           {/* Auth Buttons (Desktop) */}
           <HStack gap={3} display={{ base: 'none', md: 'flex' }}>
-            {isLoggedIn ? (
+            {isAuthLoading ? null : isLoggedIn ? (
               <>
                 <Text fontSize="sm" color="gray.600">
                   {user?.nickname}님
@@ -150,7 +150,7 @@ export default function Header() {
                   </Box>
                 </Link>
               ))}
-              {isLoggedIn ? (
+              {isAuthLoading ? null : isLoggedIn ? (
                 <Box mt={2}>
                   <Text fontSize="sm" color="gray.600" mb={2} px={3}>
                     {user?.nickname}님

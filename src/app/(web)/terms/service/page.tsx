@@ -2,8 +2,8 @@ import { Box, Container, Heading, Stack } from '@chakra-ui/react'
 import styles from '../terms.module.css'
 
 export const metadata = {
-  title: '이용약관 - 이름없는 테니스 모임',
-  description: '이름없는 테니스 모임의 이용약관입니다.',
+  title: '이용약관 - 풀코트 테니스 모임',
+  description: '풀코트 테니스 모임의 이용약관입니다.',
 }
 
 export default function ServiceTermsPage() {
@@ -15,7 +15,7 @@ export default function ServiceTermsPage() {
         <Stack gap={6}>
           <Box className={styles.termsContent}>
             <p>
-              본 약관은 <strong>이름없는 테니스 모임</strong>(이하
+              본 약관은 <strong>풀코트 테니스 모임</strong>(이하
               &ldquo;NTG&rdquo;)이 제공하는 테니스 모임 관리 서비스의 이용과
               관련하여 회원과 운영자 간의 권리·의무 및 책임사항을 규정함을
               목적으로 합니다.

@@ -3,8 +3,8 @@ import { Suspense } from 'react'
 import MemberList from './_components/MemberList'
 
 export const metadata = {
-  title: '회원 목록 - 이름없는 테니스 모임',
-  description: '이름없는 테니스 모임 회원 목록을 확인합니다.',
+  title: '회원 목록 - 풀코트 테니스 모임',
+  description: '풀코트 테니스 모임 회원 목록을 확인합니다.',
 }
 
 interface PageProps {

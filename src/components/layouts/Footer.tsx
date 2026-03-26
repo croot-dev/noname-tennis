@@ -12,17 +12,25 @@ export default function Footer() {
           gap={4}
         >
           <Text fontSize="sm" color="gray.400">
-            © 2026 이름없는 테니스 모임
+            © 2026 풀코트 테니스 모임
           </Text>
 
           <HStack gap={4}>
             <Link href="/terms/service">
-              <Text fontSize="sm" color="gray.400" _hover={{ color: 'gray.700' }}>
+              <Text
+                fontSize="sm"
+                color="gray.400"
+                _hover={{ color: 'gray.700' }}
+              >
                 이용약관
               </Text>
             </Link>
             <Link href="/terms/privacy">
-              <Text fontSize="sm" color="gray.400" _hover={{ color: 'gray.700' }}>
+              <Text
+                fontSize="sm"
+                color="gray.400"
+                _hover={{ color: 'gray.700' }}
+              >
                 개인정보처리방침
               </Text>
             </Link>

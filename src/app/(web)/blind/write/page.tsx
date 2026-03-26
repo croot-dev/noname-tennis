@@ -10,8 +10,8 @@ import { Suspense } from 'react'
 import BlindForm from './_components/BlindForm'
 
 export const metadata = {
-  title: '블라인드 작성 - 이름없는 테니스 모임',
-  description: '이름없는 테니스 모임 블라인드 글을 작성합니다.',
+  title: '블라인드 작성 - 풀코트 테니스 모임',
+  description: '풀코트 테니스 모임 블라인드 글을 작성합니다.',
 }
 
 function BlindFormFallback() {

@@ -37,7 +37,7 @@ const anthropic = new Anthropic({
 })
 
 /** Claude에게 전달하는 시스템 프롬프트 (역할, 규칙 정의) */
-const SYSTEM_PROMPT = `당신은 "이름없는 테니스 모임(이테모)"의 AI 어시스턴트입니다.
+const SYSTEM_PROMPT = `당신은 "풀코트 테니스 모임(이테모)"의 AI 어시스턴트입니다.
 테니스 동호회 회원들의 일정 관리를 도와주는 역할입니다.
 
 주요 규칙:
@@ -131,7 +131,8 @@ async function executeToolCall(
       return JSON.stringify({
         query,
         hits: [],
-        message: '문서 검색 기능이 아직 준비되지 않았습니다. 운영진에게 문의해 주세요.',
+        message:
+          '문서 검색 기능이 아직 준비되지 않았습니다. 운영진에게 문의해 주세요.',
       })
     }
 

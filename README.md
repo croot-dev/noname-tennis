@@ -1,4 +1,4 @@
-# 이름없는 테니스 모임 (Noname Tennis Group)
+# 풀코트 테니스 모임 (Noname Tennis Group)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/efee58a8-ed4f-40cd-b3d2-915fe62cb668/deploy-status)](https://app.netlify.com/projects/
 noname-tennis/deploys)
@@ -7,7 +7,7 @@ noname-tennis/deploys)
 
 ## 프로젝트 개요
 
-이름없는 테니스 모임(이하 NTG)은 테니스 동호회 회원 관리 및 커뮤니티 웹 애플리케이션입니다.
+풀코트 테니스 모임(이하 NTG)은 테니스 동호회 회원 관리 및 커뮤니티 웹 애플리케이션입니다.
 
 ### 주요 기능
 

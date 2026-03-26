@@ -5,8 +5,8 @@ import { getAuthSession } from '@/lib/auth.server'
 import AccessDenied from '@/components/common/AccessDenied'
 
 export const metadata = {
-  title: '공지사항 상세 - 이름없는 테니스 모임',
-  description: '이름없는 테니스 모임 공지사항 상세내용을 조회합니다.',
+  title: '공지사항 상세 - 풀코트 테니스 모임',
+  description: '풀코트 테니스 모임 공지사항 상세내용을 조회합니다.',
 }
 
 interface PageProps {

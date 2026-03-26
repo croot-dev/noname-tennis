@@ -51,7 +51,7 @@ export default function AuthSignIn() {
       <Stack gap={6} align="center" maxW="md" w="full" p={8}>
         <Stack gap={2} align="center" textAlign="center">
           <Heading size="2xl" color="teal.500">
-            이름없는 테니스 모임
+            풀코트 테니스 모임
           </Heading>
           <Text fontSize="lg" color="gray.600">
             카카오 계정으로 간편하게 시작하세요

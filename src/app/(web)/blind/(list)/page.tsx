@@ -4,8 +4,8 @@ import BlindList from './_components/BlindList'
 import BlindWriteButton from './_components/BlindWriteButton'
 
 export const metadata = {
-  title: '블라인드 - 이름없는 테니스 모임',
-  description: '이름없는 테니스 모임의 블라인드 글을 확인하세요.',
+  title: '블라인드 - 풀코트 테니스 모임',
+  description: '풀코트 테니스 모임의 블라인드 글을 확인하세요.',
 }
 
 interface PageProps {
