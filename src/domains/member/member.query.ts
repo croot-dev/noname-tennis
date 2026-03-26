@@ -229,6 +229,7 @@ export async function createMember(
       RETURNING member_seq, role_seq
     )
     SELECT
+      im.seq,
       im.member_id,
       im.email,
       im.name,

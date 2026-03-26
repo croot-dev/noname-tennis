@@ -4,27 +4,56 @@ import { cookies } from 'next/headers'
 
 // JWT 시크릿 키 (환경 변수에서 가져오기)
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-this-in-production'
+  process.env.JWT_SECRET || 'your-secret-key-change-this-in-production',
 )
 
 const ACCESS_TOKEN_EXPIRY = '15m' // 15분
 const REFRESH_TOKEN_EXPIRY = '7d' // 7일
 
 export interface TokenPayload {
-  memberId: string   // 카카오 로그인 ID (인증 경계에서만 사용)
-  memberSeq: number  // 내부 PK (DB 조회에 사용)
+  memberId: string // 카카오 로그인 ID (인증 경계에서만 사용)
+  memberSeq: number // 내부 PK (DB 조회에 사용)
   roleCode?: string
   roleName?: string
   email?: string
+}
+
+function normalizeMemberSeq(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value
+  }
+
+  if (typeof value === 'string' && value.trim() !== '') {
+    const parsed = Number(value)
+    if (Number.isFinite(parsed)) {
+      return parsed
+    }
+  }
+
+  return null
+}
+
+function normalizeTokenPayload(payload: TokenPayload): TokenPayload {
+  const memberSeq = normalizeMemberSeq(payload.memberSeq)
+  if (memberSeq === null) {
+    throw new Error('Invalid memberSeq in token payload')
+  }
+
+  return {
+    ...payload,
+    memberSeq,
+  }
 }
 
 /**
  * Access Token 생성
  */
 export async function createAccessToken(
-  payload: TokenPayload
+  payload: TokenPayload,
 ): Promise<string> {
-  return await new SignJWT({ ...payload })
+  const normalizedPayload = normalizeTokenPayload(payload)
+
+  return await new SignJWT({ ...normalizedPayload })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(ACCESS_TOKEN_EXPIRY)
@@ -35,9 +64,11 @@ export async function createAccessToken(
  * Refresh Token 생성
  */
 export async function createRefreshToken(
-  payload: TokenPayload
+  payload: TokenPayload,
 ): Promise<string> {
-  return await new SignJWT({ ...payload })
+  const normalizedPayload = normalizeTokenPayload(payload)
+
+  return await new SignJWT({ ...normalizedPayload })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(REFRESH_TOKEN_EXPIRY)
@@ -51,11 +82,13 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET)
 
+    const memberSeq = normalizeMemberSeq(payload.memberSeq)
+
     // payload에서 필요한 필드만 추출하여 TokenPayload로 변환
-    if (payload && typeof payload.memberId === 'string' && typeof payload.memberSeq === 'number') {
+    if (payload && typeof payload.memberId === 'string' && memberSeq !== null) {
       return {
         memberId: payload.memberId,
-        memberSeq: payload.memberSeq,
+        memberSeq,
         roleCode: payload.roleCode as string | undefined,
         roleName: payload.roleName as string | undefined,
         email: payload.email as string | undefined,
@@ -84,7 +117,7 @@ export function getAccessTokenFromRequest(request: Request): string | null {
   if (cookieToken) {
     const match = cookieToken.match(/accessToken=([^;]+)/)
     if (match) {
-      return match[1]
+      return decodeURIComponent(match[1])
     }
   }
 
@@ -99,7 +132,7 @@ function getRefreshTokenFromRequest(request: Request): string | null {
   if (cookieHeader) {
     const match = cookieHeader.match(/refreshToken=([^;]+)/)
     if (match) {
-      return match[1]
+      return decodeURIComponent(match[1])
     }
   }
   return null
@@ -111,7 +144,7 @@ function getRefreshTokenFromRequest(request: Request): string | null {
  * 갱신된 토큰은 refreshedAccessToken에 저장됨
  */
 export async function getAuthUser(
-  request: Request
+  request: Request,
 ): Promise<{ payload: TokenPayload; refreshedAccessToken?: string } | null> {
   const accessToken = getAccessTokenFromRequest(request)
 
@@ -146,7 +179,7 @@ export async function getAuthUser(
  */
 export async function setAuthCookies(
   accessToken: string,
-  refreshToken: string
+  refreshToken: string,
 ) {
   const cookieStore = await cookies()
 
@@ -180,7 +213,7 @@ export async function clearAuthCookies() {
  * Refresh Token으로 새로운 Access Token 발급
  */
 export async function refreshAccessToken(
-  refreshToken: string
+  refreshToken: string,
 ): Promise<string | null> {
   const payload = await verifyToken(refreshToken)
   if (!payload) {
@@ -194,7 +227,7 @@ export async function refreshAccessToken(
  * NextRequest에서 인증된 사용자 정보 가져오기
  */
 export async function getAuthUserFromNextRequest(
-  request: Request
+  request: Request,
 ): Promise<TokenPayload | null> {
   // 쿠키에서 accessToken 가져오기
   const cookieHeader = request.headers.get('cookie')
@@ -208,5 +241,6 @@ export async function getAuthUserFromNextRequest(
   }
 
   const token = match[1]
-  return await verifyToken(token)
+  const decodedToken = decodeURIComponent(token)
+  return await verifyToken(decodedToken)
 }

@@ -16,8 +16,8 @@ export async function withAuth(
   request: NextRequest,
   handler: (
     req: AuthenticatedRequest,
-    user: TokenPayload
-  ) => Promise<NextResponse>
+    user: TokenPayload,
+  ) => Promise<NextResponse>,
 ): Promise<NextResponse> {
   const authResult = await getAuthUser(request)
 
@@ -56,8 +56,8 @@ export async function withOptionalAuth(
   request: NextRequest,
   handler: (
     req: AuthenticatedRequest,
-    user: TokenPayload | null
-  ) => Promise<NextResponse>
+    user: TokenPayload | null,
+  ) => Promise<NextResponse>,
 ): Promise<NextResponse> {
   const authResult = await getAuthUser(request)
 

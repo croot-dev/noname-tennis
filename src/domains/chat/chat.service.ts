@@ -215,11 +215,21 @@ export async function processChatStream(
                   ),
                 )
 
-                const toolResult = await executeToolCall(
-                  block.name,
-                  block.input as Record<string, unknown>,
-                  hostMemberSeq,
-                )
+                let toolResult: string
+                try {
+                  toolResult = await executeToolCall(
+                    block.name,
+                    block.input as Record<string, unknown>,
+                    hostMemberSeq,
+                  )
+                } catch (error) {
+                  console.error(`[Chat Tool Error] ${block.name}:`, error)
+                  toolResult = JSON.stringify({
+                    success: false,
+                    error: '도구 실행 중 일시적인 오류가 발생했습니다.',
+                    tool: block.name,
+                  })
+                }
 
                 controller.enqueue(
                   encoder.encode(

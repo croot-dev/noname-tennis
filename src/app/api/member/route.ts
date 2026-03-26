@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
       const { searchParams } = new URL(authenticatedReq.url)
       const { page, limit } = parsePaginationParams(
         searchParams.get('page'),
-        searchParams.get('limit')
+        searchParams.get('limit'),
       )
 
       const result = await getMemberList(page, limit)
@@ -44,12 +44,13 @@ export async function POST(req: NextRequest) {
       gender,
       nickname,
       ntrp,
-      ...(phone && {phone}),
+      ...(phone && { phone }),
     })
 
     // JWT 토큰 생성
     const accessToken = await createAccessToken({
       memberId: user.member_id,
+      memberSeq: Number(user.seq),
       email: user.email,
       roleName: user.role_name,
       roleCode: user.role_code,
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
 
     const refreshToken = await createRefreshToken({
       memberId: user.member_id,
+      memberSeq: Number(user.seq),
       email: user.email,
       roleName: user.role_name,
       roleCode: user.role_code,
@@ -78,7 +80,7 @@ export async function POST(req: NextRequest) {
         },
         accessToken,
       },
-      { status: 201 }
+      { status: 201 },
     )
 
     // HttpOnly 쿠키로 JWT 토큰 설정

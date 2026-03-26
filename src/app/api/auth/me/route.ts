@@ -13,7 +13,6 @@ type AuthMeCacheEntry = {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var __authMeCache__: Map<string, AuthMeCacheEntry> | undefined
 }
 
@@ -62,12 +61,13 @@ export async function GET(req: NextRequest) {
   return withAuth(req, async (_authenticatedReq, user) => {
     const cacheKey = String(user.memberSeq)
     const cachedMember = getCachedMember(cacheKey)
-    const memberWithRole = cachedMember ?? (await getMemberBySeq(user.memberSeq))
+    const memberWithRole =
+      cachedMember ?? (await getMemberBySeq(user.memberSeq))
 
     if (!memberWithRole) {
       return NextResponse.json(
         { error: '회원 정보를 찾을 수 없습니다.' },
-        { status: 404 }
+        { status: 404 },
       )
     }
 

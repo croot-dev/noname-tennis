@@ -4,7 +4,7 @@
  */
 
 import 'server-only'
-import { sql } from '@/lib/db.server'
+import { sql, withDbRetry } from '@/lib/db.server'
 import {
   TennisCourt,
   CreateCourtDto,
@@ -22,23 +22,27 @@ export async function getCourtList(
 ): Promise<CourtListResult> {
   const offset = (page - 1) * limit
 
-  const [courts, countResult] = (await Promise.all([
-    isIndoor === undefined
-      ? sql`
-          SELECT * FROM tennis_courts
-          ORDER BY name DESC
-          LIMIT ${limit} OFFSET ${offset}
-        `
-      : sql`
-          SELECT * FROM tennis_courts
-          WHERE is_indoor = ${isIndoor}
-          ORDER BY name DESC
-          LIMIT ${limit} OFFSET ${offset}
-        `,
-    isIndoor === undefined
-      ? sql`SELECT COUNT(*) as total FROM tennis_courts`
-      : sql`SELECT COUNT(*) as total FROM tennis_courts WHERE is_indoor = ${isIndoor}`,
-  ])) as [TennisCourt[], { total: number }[]]
+  const [courts, countResult] = (await withDbRetry(
+    () =>
+      Promise.all([
+        isIndoor === undefined
+          ? sql`
+              SELECT * FROM tennis_courts
+              ORDER BY name DESC
+              LIMIT ${limit} OFFSET ${offset}
+            `
+          : sql`
+              SELECT * FROM tennis_courts
+              WHERE is_indoor = ${isIndoor}
+              ORDER BY name DESC
+              LIMIT ${limit} OFFSET ${offset}
+            `,
+        isIndoor === undefined
+          ? sql`SELECT COUNT(*) as total FROM tennis_courts`
+          : sql`SELECT COUNT(*) as total FROM tennis_courts WHERE is_indoor = ${isIndoor}`,
+      ]),
+    'getCourtList',
+  )) as [TennisCourt[], { total: number }[]]
 
   return {
     courts,

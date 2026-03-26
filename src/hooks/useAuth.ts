@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
-import { hasAuthFlag, clearAuthFlag } from '@/lib/auth.client'
+import { setAuthFlag, clearAuthFlag } from '@/lib/auth.client'
 import { ApiError, request, refreshToken } from '@/lib/api.client'
 import { CreateMemberDto, Member, MemberWithRole } from '@/domains/member'
 
@@ -39,15 +39,16 @@ export function useUserInfo() {
 
   return useQuery({
     queryKey: authKeys.user(),
-    enabled: mounted && hasAuthFlag(),
+    enabled: mounted,
     staleTime: 1000 * 60 * 1,
     retry: false,
 
     queryFn: async () => {
-      if (!hasAuthFlag()) return null
-
       try {
-        return await request<MemberWithRole>('/api/auth/me')
+        const user = await request<MemberWithRole>('/api/auth/me')
+        // 쿠키가 유효하면 플래그 복원 (플래그가 지워진 경우 복구)
+        setAuthFlag()
+        return user
       } catch (error) {
         // 인증 만료 케이스만 정책 처리
         if (error instanceof ApiError && error.status === 401) {
@@ -60,7 +61,9 @@ export function useUserInfo() {
 
           // refresh 성공 → 재시도
           try {
-            return await request<MemberWithRole>('/api/auth/me')
+            const user = await request<MemberWithRole>('/api/auth/me')
+            setAuthFlag()
+            return user
           } catch {
             clearAuthFlag()
             return null

@@ -1,7 +1,33 @@
 import { MEMBER_ROLE } from '@/constants'
-import { getAuthSession } from '@/lib/auth.server'
+import { jwtVerify } from 'jose'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || 'your-secret-key-change-this-in-production'
+)
+
+// Edge Runtime 호환: request.cookies 직접 사용 (next/headers 사용 불가)
+async function getSessionFromRequest(request: NextRequest) {
+  const accessToken = request.cookies.get('accessToken')?.value
+  const refreshToken = request.cookies.get('refreshToken')?.value
+
+  if (accessToken) {
+    try {
+      const { payload } = await jwtVerify(accessToken, JWT_SECRET)
+      if (payload && typeof payload.memberId === 'string') return payload
+    } catch {}
+  }
+
+  if (refreshToken) {
+    try {
+      const { payload } = await jwtVerify(refreshToken, JWT_SECRET)
+      if (payload && typeof payload.memberId === 'string') return payload
+    } catch {}
+  }
+
+  return null
+}
 
 export const config = {
   matcher: [
@@ -14,7 +40,7 @@ export const config = {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const session = await getAuthSession()
+  const session = await getSessionFromRequest(request)
 
   // 로그인 페이지로 리다이렉트 (현재 경로를 redirect_url로 포함)
   const redirectToSignIn = () => {
