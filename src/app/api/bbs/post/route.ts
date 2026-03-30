@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { withAuth } from '@/lib/auth.server'
 import { getPostList, writePost } from '@/domains/post'
+import { getMemberById } from '@/domains/member'
 import { handleApiError } from '@/lib/api.error'
 import { BBS_TYPE } from '@/constants'
 import { parsePaginationParams, parseIntSafe } from '@/lib/query.utils'
+import { ServiceError, ErrorCode } from '@/lib/error'
 
 // 게시글 목록 조회 API (인증 불필요)
 export async function GET(req: NextRequest) {
@@ -30,13 +32,20 @@ export async function POST(req: NextRequest) {
     try {
       const body = await authenticatedReq.json()
       const { bbs_type_id, title, content } = body
+      const member = await getMemberById(user.memberId)
+
+      if (!member) {
+        throw new ServiceError(
+          ErrorCode.UNAUTHORIZED,
+          '회원 정보를 찾을 수 없습니다.'
+        )
+      }
 
       const result = await writePost({
         bbs_type_id: parseInt(bbs_type_id) || 1,
         title,
         content,
-        writer_seq:
-          Number(bbs_type_id) === BBS_TYPE.BLIND ? 0 : user?.memberSeq,
+        writer_seq: Number(bbs_type_id) === BBS_TYPE.BLIND ? 0 : member.seq,
       })
 
       return NextResponse.json(result)

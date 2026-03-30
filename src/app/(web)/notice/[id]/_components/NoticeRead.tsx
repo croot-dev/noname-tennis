@@ -71,7 +71,7 @@ export default async function NoticeRead({ postId }: NoticeReadProps) {
           <Button variant="outline">목록으로</Button>
         </Link>
 
-        <NoticeActions postId={post.post_id} writerId={post.writer_id} />
+        <NoticeActions postId={post.post_id} writerId={post.writer_seq} />
       </Box>
     </Stack>
   )

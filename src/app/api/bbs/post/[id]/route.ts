@@ -6,6 +6,7 @@ import {
   removePost,
   addViewCount,
 } from '@/domains/post'
+import { getMemberById } from '@/domains/member'
 import { handleApiError } from '@/lib/api.error'
 import { ServiceError, ErrorCode } from '@/lib/error'
 
@@ -45,6 +46,14 @@ export async function PUT(
 ) {
   return withAuth(req, async (authenticatedReq, user) => {
     try {
+      const member = await getMemberById(user.memberId)
+      if (!member) {
+        throw new ServiceError(
+          ErrorCode.UNAUTHORIZED,
+          '회원 정보를 찾을 수 없습니다.'
+        )
+      }
+
       const { id } = await params
       const body = await authenticatedReq.json()
       const { title, content, bbs_type_id } = body
@@ -53,7 +62,7 @@ export async function PUT(
 
       const updatedPost = await modifyPost(
         post_id,
-        { title, content, user_id: user.memberSeq },
+        { title, content, user_id: member.seq },
         type_id
       )
 
@@ -72,12 +81,20 @@ export async function DELETE(
 ) {
   return withAuth(req, async (_authenticatedReq, user) => {
     try {
+      const member = await getMemberById(user.memberId)
+      if (!member) {
+        throw new ServiceError(
+          ErrorCode.UNAUTHORIZED,
+          '회원 정보를 찾을 수 없습니다.'
+        )
+      }
+
       const { id } = await params
       const { searchParams } = new URL(req.url)
       const bbs_type_id = parseInt(searchParams.get('type') || '1')
       const post_id = parseInt(id)
 
-      await removePost(post_id, user.memberSeq, bbs_type_id)
+      await removePost(post_id, member.seq, bbs_type_id)
 
       return NextResponse.json(true)
     } catch (error) {

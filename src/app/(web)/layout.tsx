@@ -8,6 +8,7 @@ import Footer from '@/components/layouts/Footer'
 import MobileBottomNav from '@/components/layouts/MobileBottomNav'
 import ChatBot from '@/components/chat/ChatBot'
 import NextTopLoader from 'nextjs-toploader'
+import { fullcourtHex } from '@/theme/fullcourt.colors'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,7 +39,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextTopLoader color="#319795" showSpinner={false} />
+        <NextTopLoader color={fullcourtHex.pointBlue} showSpinner={false} />
         <ChakraProvider>
           <TanstackProvider>
             <Header />

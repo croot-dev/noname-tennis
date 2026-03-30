@@ -72,6 +72,7 @@ export function useCreatePost() {
 
 interface UpdatePostInput {
   id: number
+  bbs_type_id?: number
   title?: string
   content?: string
 }
@@ -84,7 +85,10 @@ export function useUpdatePost() {
 
   return useMutation({
     mutationFn: ({ id, ...data }: UpdatePostInput) =>
-      request<{ post: PostDto }>(`/api/bbs/post/${id}`, { body: data }),
+      request<PostDto>(`/api/bbs/post/${id}`, {
+        method: 'PUT',
+        body: data,
+      }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: postKeys.detail(variables.id),

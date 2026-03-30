@@ -1,6 +1,9 @@
-import { Box, Container, Heading, Stack, Skeleton } from '@chakra-ui/react'
+import { Box, Button, Container, Heading, Stack, Skeleton, Text } from '@chakra-ui/react'
 import { Suspense } from 'react'
 import NoticeForm from './_components/NoticeForm'
+import Link from 'next/link'
+import { getPostById } from '@/domains/post'
+import { BBS_TYPE } from '@/constants'
 
 export const metadata = {
   title: '공지사항 작성 - 풀코트 테니스 모임',
@@ -28,14 +31,45 @@ function NoticeFormFallback() {
   )
 }
 
-export default function NoticeWritePage() {
+interface NoticeWritePageProps {
+  searchParams: Promise<{ edit?: string }>
+}
+
+export default async function NoticeWritePage({ searchParams }: NoticeWritePageProps) {
+  const { edit } = await searchParams
+  const editPostId = Number(edit)
+  const isEditMode = Number.isInteger(editPostId) && editPostId > 0
+
+  const post = isEditMode ? await getPostById(editPostId, BBS_TYPE.NOTICE) : null
+
+  if (isEditMode && !post) {
+    return (
+      <Container maxW="container.lg" py={10}>
+        <Stack gap={6} align="center">
+          <Heading size="xl">공지사항 수정</Heading>
+          <Text color="gray.600">수정할 게시글을 찾을 수 없습니다.</Text>
+          <Link href="/notice">
+            <Button variant="outline">공지사항 목록으로</Button>
+          </Link>
+        </Stack>
+      </Container>
+    )
+  }
+
   return (
     <Container maxW="container.lg" py={10}>
       <Stack gap={8}>
-        <Heading size="2xl">공지사항 작성</Heading>
+        <Heading size="2xl">
+          {isEditMode ? '공지사항 수정' : '공지사항 작성'}
+        </Heading>
 
         <Suspense fallback={<NoticeFormFallback />}>
-          <NoticeForm />
+          <NoticeForm
+            mode={isEditMode ? 'edit' : 'create'}
+            postId={isEditMode ? editPostId : undefined}
+            initialTitle={post?.title || ''}
+            initialContent={post?.content || ''}
+          />
         </Suspense>
       </Stack>
     </Container>

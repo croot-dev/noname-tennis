@@ -4,7 +4,7 @@ import { Field, Stack, Button, Input, Box } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { useCreatePost } from '@/hooks/usePosts'
+import { useCreatePost, useUpdatePost } from '@/hooks/usePosts'
 import { BBS_TYPE } from '@/constants'
 
 // Quill 에디터를 동적으로 로드 (SSR 방지)
@@ -13,12 +13,25 @@ const QuillEditor = dynamic(() => import('./QuillEditor'), {
   loading: () => <Box minH="300px" bg="gray.100" borderRadius="md" />,
 })
 
-export default function NoticeForm() {
+interface NoticeFormProps {
+  mode?: 'create' | 'edit'
+  postId?: number
+  initialTitle?: string
+  initialContent?: string
+}
+
+export default function NoticeForm({
+  mode = 'create',
+  postId,
+  initialTitle = '',
+  initialContent = '',
+}: NoticeFormProps) {
   const router = useRouter()
   const createPost = useCreatePost()
+  const updatePost = useUpdatePost()
 
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+  const [title, setTitle] = useState(initialTitle)
+  const [content, setContent] = useState(initialContent)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,6 +43,31 @@ export default function NoticeForm() {
     }
 
     setIsSubmitting(true)
+
+    if (mode === 'edit' && postId) {
+      updatePost.mutate(
+        {
+          id: postId,
+          bbs_type_id: BBS_TYPE.NOTICE,
+          title,
+          content,
+        },
+        {
+          onSuccess: (result) => {
+            router.push(`/notice/${result.post_id}`)
+            setIsSubmitting(false)
+          },
+          onError: (error) => {
+            console.error('글 수정 에러:', error)
+            alert('글 수정 중 오류가 발생했습니다.')
+          },
+          onSettled: () => {
+            setIsSubmitting(false)
+          },
+        }
+      )
+      return
+    }
 
     createPost.mutate(
       {
@@ -90,7 +128,7 @@ export default function NoticeForm() {
             loading={isSubmitting}
             disabled={isSubmitting}
           >
-            작성하기
+            {mode === 'edit' ? '수정하기' : '작성하기'}
           </Button>
         </Box>
       </Stack>
